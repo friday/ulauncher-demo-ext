@@ -2,8 +2,6 @@ import json
 import logging
 from time import sleep
 from ulauncher.api.client.Extension import Extension
-from ulauncher.api.client.EventListener import EventListener
-from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
@@ -14,19 +12,11 @@ logger = logging.getLogger(__name__)
 
 class DemoExtension(Extension):
 
-    def __init__(self):
-        super(DemoExtension, self).__init__()
-        self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
-        self.subscribe(ItemEnterEvent, ItemEnterEventListener())
-
-
-class KeywordQueryEventListener(EventListener):
-
-    def on_event(self, event, extension):
+    def on_query(self, event):
         items = []
-        logger.info('preferences %s' % json.dumps(extension.preferences))
+        logger.info('preferences %s' % json.dumps(self.preferences))
         for i in range(5):
-            item_name = extension.preferences['item_name']
+            item_name = self.preferences['item_name']
             data = {'new_name': '%s %s was clicked' % (item_name, i)}
             items.append(ExtensionResultItem(icon='images/icon.png',
                                              name='%s %s' % (item_name, i),
@@ -35,10 +25,8 @@ class KeywordQueryEventListener(EventListener):
 
         return RenderResultListAction(items)
 
-
-class ItemEnterEventListener(EventListener):
-
-    def on_event(self, event, extension):
+    
+    def on_item_enter(self, event):
         data = event.get_data()
         return RenderResultListAction([ExtensionResultItem(icon='images/icon.png',
                                                            name=data['new_name'],
