@@ -27,9 +27,8 @@ class DemoExtension(Extension):
 
     
     def on_item_enter(self, event):
-        data = event.get_data()
         return RenderResultListAction([ExtensionResultItem(icon='images/icon.png',
-                                                           name=data['new_name'],
+                                                           name=event['new_name'],
                                                            on_enter=HideWindowAction())])
 
 
